@@ -18,6 +18,7 @@ class GetGoogleDriveFiles
     public string $accessToken;
     public string $clientId;
     public string $clientSecret;
+    public string $redirectUri;
 
 
     public function __construct()
@@ -28,12 +29,12 @@ class GetGoogleDriveFiles
         $this->destinationPath = storage_path('app/public');
         $this->clientId = config('googleDriveAuth.client_id');
         $this->clientSecret = config('googleDriveAuth.client_secret');
+        $this->redirectUri = config('googleDriveAuth.redirect_uri');
     }
 
     public function handle()
     {
-        //$this->accessToken = $this->getAccessToken();
-        $this->accessToken = config('googleDriveAuth.access_token');
+        $this->accessToken = $this->getAccessToken();
         $data = $this->getFilesId();
         $this->importFiles($data);
         return 'Arhivos obtenidos correctamente';
@@ -81,6 +82,7 @@ class GetGoogleDriveFiles
                 'client_secret' => $this->clientSecret,
                 'refresh_token' => $this->refreshToken,
                 'grant_type' => 'refresh_token',
+                'redirect_url' => $this->redirectUri
             ],
         ]);
         $data = json_decode($response->getBody(), true);
